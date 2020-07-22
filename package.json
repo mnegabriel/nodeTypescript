@@ -1,0 +1,19 @@
+{
+  "name": "nodeTypescript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mnegabriel/nodeTypescript.git",
+  "author": "Gabriel Dantas <gabrielmd123@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.7",
+    "ts-node-dev": "^1.0.0-pre.52",
+    "typescript": "^3.9.7"
+  }
+}
