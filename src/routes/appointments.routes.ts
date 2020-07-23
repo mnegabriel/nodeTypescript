@@ -1,10 +1,13 @@
 import { Router } from 'express';
-import { startOfHour, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
+import CreateAppointmentService from '../services/CreateAppointmentService';
 
 const appointmentsRouter = Router();
 const appointmentsRepository = new AppointmentsRepository();
+
+// deveres de uma Rota: Receber a requisição, chamar outro arquivo, devolver uma resposta
 
 appointmentsRouter.get('/', (request, response) => {
   const appointments = appointmentsRepository.listAll();
@@ -13,21 +16,23 @@ appointmentsRouter.get('/', (request, response) => {
 });
 
 appointmentsRouter.post('/', (request, response) => {
-  const { provider, date } = request.body;
+  try {
+    const { provider, date } = request.body;
 
-  const parsedDate = startOfHour(parseISO(date));
-  const dateVerification = appointmentsRepository.findByDate(parsedDate);
+    const parsedDate = parseISO(date); // transformação de um dado
 
-  if (dateVerification) {
-    return response.status(400).json({ message: 'Timeslot not available' });
+    const createAppointment = new CreateAppointmentService(
+      appointmentsRepository,
+    );
+
+    const appointment = createAppointment.execute({
+      date: parsedDate,
+      provider,
+    });
+    return response.json(appointment);
+  } catch (err) {
+    return response.status(400).json({ error: err.message });
   }
-
-  const appointment = appointmentsRepository.create({
-    provider,
-    date: parsedDate,
-  });
-
-  return response.json(appointment);
 });
 
 export default appointmentsRouter;
